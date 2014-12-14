@@ -27,6 +27,10 @@ public class LED extends Subsystem
     
     static private final DriverStation station = DriverStation.getInstance();
     
+    static private boolean enabled = false,
+    			   red = false,
+    			   autonomous = false;
+    
     /**
      * Sets the Arduino's LEDs to indicate that the robot is enabled
      * @author ThePenultimateOne
@@ -67,10 +71,24 @@ public class LED extends Subsystem
     	team.set(station.isEnabled());
     }
     
+    /**
+     * Updates all LED-related information over the SmartDashboard network
+     * @author ThePenultimateOne
+     * @since OpenOffload (0.1.0) || Bruce (2.4.0)
+    */
     static public void updateNetworkBeta()	{
-    	SmartDashboard.putBoolean("Red",(station.getAlliance() == Alliance.kRed));
-    	SmartDashboard.pubBoolean("Enabled",(station.isEnabled());
-    	SmartDashboutd.putBoolean("Autonomous",(station.isAutonomous());
+    	if (red != (station.getAlliance() == Alliance.kRed))	{ //These checks are for bandwidth conservation
+    		red = (station.getAlliance() == Alliance.kRed);
+    		SmartDashboard.putBoolean("Red",red);	
+    	}
+    	if (enabled != (station.isEnabled))	{
+    		enabled = station.isEnabled();
+    		SmartDashboard.pubBoolean("Enabled",enabled);
+    	}
+    	if (autonomous != (station.isAutonomous()))	{
+    		autonomous = (station.isAutonomous());
+    		SmartDashboutd.putBoolean("Autonomous",autonomous);
+    	}
     }
     
     public void initDefaultCommand()
