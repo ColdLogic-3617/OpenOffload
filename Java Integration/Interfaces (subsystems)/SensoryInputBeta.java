@@ -48,4 +48,9 @@ public class SensoryInputBeta extends Subsystem {
         updateVision();
         return hotness;        
     }
+    
+    public boolean isHot()  {
+        updateVision();
+        return (hotness == Var.autonomousHotGoals)
+    }
 }
