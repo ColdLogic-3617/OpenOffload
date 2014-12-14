@@ -53,41 +53,41 @@ int main(int argc, char **argv) {
 	bool ShowMask = true; // flag to make the masked image where 'target' is seen, otherwise displays raw source image
 	bool ShowVideo = false;   
 	while ((c = getopt (argc, argv, "b:mvs")) != -1)
-	switch (c) {
-		case 'b': {
-			char* endptr;
-			errno = 0;    /* To distinguish success/failure after call */
-			long val = strtol(optarg, &endptr, 0);
+		switch (c) {
+			case 'b': {
+				char* endptr;
+				errno = 0;    /* To distinguish success/failure after call */
+				long val = strtol(optarg, &endptr, 0);
 
-			/* Check for various possible errors */
-			if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN)) || (errno != 0 && val == 0) || (val > 100) || (val < 0)) {
-				fprintf(stderr, "Invalid integer for 'b'eta: '%s'\n",optarg);
-				exit(EXIT_FAILURE);
+				/* Check for various possible errors */
+				if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN)) || (errno != 0 && val == 0) || (val > 100) || (val < 0)) {
+					fprintf(stderr, "Invalid integer for 'b'eta: '%s'\n",optarg);
+					exit(EXIT_FAILURE);
+				}
+				type = val;
+				break;
 			}
-			type = val;
-			break;
+			case 'm':
+				ShowMask = true;
+				break;
+			case 'v': // VGA resolution (640x480, but is slow)
+				width = 640;
+				height = 480;
+				break;
+			case 's': // Show the video
+				ShowVideo = true;
+				break;
+			case '?':
+				if (optopt == 'b')
+					fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+				else if (isprint (optopt))
+					fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+				else
+					fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
+				return 1;
+			default:
+				abort ();
 		}
-		case 'm':
-			ShowMask = true;
-			break;
-		case 'v': // VGA resolution (640x480, but is slow)
-			width = 640;
-			height = 480;
-			break;
-		case 's': // Show the video
-			ShowVideo = true;
-			break;
-		case '?':
-			if (optopt == 'b')
-				fprintf (stderr, "Option -%c requires an argument.\n", optopt);
-			else if (isprint (optopt))
-				fprintf (stderr, "Unknown option `-%c'.\n", optopt);
-			else
-				fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
-			return 1;
-		default:
-			abort ();
-	}
 
 	cout << "Attempting to initialize capturing\n";
 
@@ -123,14 +123,14 @@ int main(int argc, char **argv) {
 		// Receive key-press updates, it is required if you want to output images,
 		// so the task takes a moment to update the display.
 		if (waitKey(1) > 0)
-		break;
+			break;
 
 		string fileStream = "Mask"; // Default if no table present
 		if (table->IsConnected()) {
-		NetworkTable *StreamsTable = table->GetSubTable("File Streams");
-		if (StreamsTable && StreamsTable->ContainsKey("selected")) {
-		fileStream = StreamsTable->GetString("selected");
-		}
+			NetworkTable *StreamsTable = table->GetSubTable("File Streams");
+			if (StreamsTable && StreamsTable->ContainsKey("selected")) {
+				fileStream = StreamsTable->GetString("selected");
+			}
 		}
 
 		ShowMask = (fileStream == "Mask");
@@ -144,49 +144,49 @@ int main(int argc, char **argv) {
 		Mat dst; // this will be a RGB version of the source image
 
 		#if defined(YOU_WANT_RGB_COLOR_INSTEAD_OF_GREYSCALE)    
-		// There is more data after the gray scale (Y) that contains U&V
-		Mat cb(height/2, width/2, CV_8UC1, buffer.data()+(height*width), false); // 'U'
-		Mat cr(height/2, width/2, CV_8UC1, buffer.data()+(height*width)*5/4, false); // 'V'
+			// There is more data after the gray scale (Y) that contains U&V
+			Mat cb(height/2, width/2, CV_8UC1, buffer.data()+(height*width), false); // 'U'
+			Mat cr(height/2, width/2, CV_8UC1, buffer.data()+(height*width)*5/4, false); // 'V'
 
-		// size up cb and cr to be same as y
-		Mat CB;
-		resize(cb,CB,cvSize(width,height));
-		Mat CR;
-		resize(cr,CR,cvSize(width,height));
+			// size up cb and cr to be same as y
+			Mat CB;
+			resize(cb,CB,cvSize(width,height));
+			Mat CR;
+			resize(cr,CR,cvSize(width,height));
 
-		// empty image same as full (gray scale) image, but 3 channels:
-		Mat ycbcr(height,width, CV_8UC3);
+			// empty image same as full (gray scale) image, but 3 channels:
+			Mat ycbcr(height,width, CV_8UC3);
 
-		Mat in[] = {image, CB, CR};
-		int fromto[] = {0,0, 1,1, 2,2}; // YUV
+			Mat in[] = {image, CB, CR};
+			int fromto[] = {0,0, 1,1, 2,2}; // YUV
 
-		// mash 3 channels from 2 matrix into a single 3 channel matrix:
-		mixChannels(in,3, &ycbcr,1, fromto,3);
+			// mash 3 channels from 2 matrix into a single 3 channel matrix:
+			mixChannels(in,3, &ycbcr,1, fromto,3);
 
-		// convert that 3 channel YUV matrix into 3 channel RGB (displayable)
-		cvtColor(ycbcr,image,CV_YCrCb2RGB);
-		if (ShowMask) {
-		dst = image.clone(); // make a copy, as we want dst to have the same RGB version
-		}
+			// convert that 3 channel YUV matrix into 3 channel RGB (displayable)
+			cvtColor(ycbcr,image,CV_YCrCb2RGB);
+			if (ShowMask) {
+				dst = image.clone(); // make a copy, as we want dst to have the same RGB version
+			}
 		#else
-		// After calculates, we want to draw 'on' the image, showing our results
-		// graphically in some fashion -- that has to happen on a RGB
-		if (ShowMask) {
-		cvtColor(image,dst,CV_GRAY2RGB); // create CV_8UC3 version of same image
-				 // which will allow us to draw some color on top of the gray
-		}
+			// After calculates, we want to draw 'on' the image, showing our results
+			// graphically in some fashion -- that has to happen on a RGB
+			if (ShowMask) {
+				cvtColor(image,dst,CV_GRAY2RGB); // create CV_8UC3 version of same image
+												 // which will allow us to draw some color on top of the gray
+			}
 		#endif    
 
 		int Found = 0;
 		if (!ShowMask) {
-		// Show the original image with OpenCV on the screen (could be Grey or RGB)
-		if(ShowVideo) {
-		imshow("Vision", image);
-		}
+			// Show the original image with OpenCV on the screen (could be Grey or RGB)
+			if(ShowVideo) {
+				imshow("Vision", image);
+			}
 
-		if(fileStream == "Raw") {
-		imwrite("/tmp/stream/pic.jpg", image);
-		}
+			if(fileStream == "Raw") {
+				imwrite("/tmp/stream/pic.jpg", image);
+			}
 
 		}
 
@@ -205,11 +205,11 @@ int main(int argc, char **argv) {
 		// Show the thresholded image with OpenCV on the screen
 
 		if(ShowVideo) {
-		imshow("Threshold", thresh);
+			imshow("Threshold", thresh);
 		}
 
 		if(fileStream == "Threshold") {
-		imwrite("/tmp/stream/pic.jpg", thresh);
+			imwrite("/tmp/stream/pic.jpg", thresh);
 		}
 
 		// Find all the contours in the thresholded image
