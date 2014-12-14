@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * A class for interfacing with the Arduino's LED systems
@@ -64,6 +65,12 @@ public class LED extends Subsystem
     static public void run()
     {
     	team.set(station.isEnabled());
+    }
+    
+    static public void updateNetworkBeta()	{
+    	SmartDashboard.putBoolean("Red",(station.getAlliance() == Alliance.kRed));
+    	SmartDashboard.pubBoolean("Enabled",(station.isEnabled());
+    	SmartDashboutd.putBoolean("Autonomous",(station.isAutonomous());
     }
     
     public void initDefaultCommand()
