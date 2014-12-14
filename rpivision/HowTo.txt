@@ -1,0 +1,10 @@
+To launch /def/video:
+sudo uv4l --sched-rr --driver raspicam --auto-video_nr --width 640 --height 480 --encoding yuv420 --nopreview --imgfx blur --awb off --framerate 30
+
+
+To build:
+g++ -L/usr/lib/uv4l/uv4lext/armv6l/ -I ../src/ -L ./ -lraspicam -luv4lext -Wl,-rpath,'/usr/lib/uv4l/uv4lext/armv6l',-rpath,'/usr/local/lib' `pkg-config --cflags opencv` `pkg-config --libs opencv` -o FindContours FindContours.cpp
+
+To run:
+LD_PRELOAD="./libraspicam.so.0.0" ./FindContours
+
