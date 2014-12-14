@@ -19,7 +19,7 @@ public class SensoryInputBeta extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
     
-    private boolean hotness;
+    private int hotness;
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
@@ -27,25 +27,25 @@ public class SensoryInputBeta extends Subsystem {
     }
     
     public void updateVision()  {
-        boolean prev = hotness;
-        hotness = SmartDashboard.getBoolean("Hotness");
+        int prev = hotness;
+        hotness = SmartDashboard.getNumber("Hotness");
         if (prev != hotness)    {
             if (DriverStation.getInstance().isAutonomous()) {
-                if (prev)
+                if (prev == Var.autonomousHotGoals)
                     Logger.printlnBeta("The goal is no longer hot.");
                 else
                     Logger.printlnBeta("The goal is now hot.");
             } else    {
-                if (prev)
-                    Logger.printlnBeta("You are no longer aimed at the goal.");
+                if (prev == Var.autonomousHotGoals)
+                    Logger.printlnBeta("You are not aimed at the goal.");
                 else
                     Logger.printlnBeta("You are now aimed at the goal.");
             }
-                
         }
     }
     
-    public boolean getVision() {
+    public int getVision() {
+        updateVision();
         return hotness;        
     }
 }
