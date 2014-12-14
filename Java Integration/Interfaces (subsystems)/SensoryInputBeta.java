@@ -20,6 +20,7 @@ public class SensoryInputBeta extends Subsystem {
     // here. Call these from Commands.
     
     private int hotness;
+    private DriverStation station = DriverStation.getInstance();
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
@@ -30,7 +31,7 @@ public class SensoryInputBeta extends Subsystem {
         int prev = hotness;
         hotness = SmartDashboard.getNumber("Hotness");
         if (prev != hotness)    {
-            if (DriverStation.getInstance().isAutonomous()) {
+            if (station.isAutonomous()) {
                 if (prev == Var.autonomousHotGoals)
                     Logger.printlnBeta("The goal is no longer hot.");
                 else
