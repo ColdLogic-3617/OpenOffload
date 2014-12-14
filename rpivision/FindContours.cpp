@@ -224,6 +224,7 @@ int main(int argc, char **argv) {
 		findContours(thresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
 		// Output information
+		int prevFound = Found;
 		for (int c=0; c<contours.size(); c++) {
 
       vector<Point> hull;
@@ -271,18 +272,9 @@ int main(int argc, char **argv) {
    		  }
 		  }
 		}
-		
-		// Output values that the Driver Station can analyze
-		
-		bool hotness = false;
-    
-    if(Found == 2) {
-      hotness = true;
-    } else {
-      hotness = false;
     }
-    
-    table->PutBoolean("Hotness", hotness);
+    if (prevFound != Found) // This is purely for bandwidth savings. If there's no change, why broadcast?
+    	table->PutNumber("Hotness", Found);
     
 		if (ShowVideo && ShowMask) {
   		imshow("Vision", dst);
