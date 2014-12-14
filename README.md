@@ -10,4 +10,3 @@ Forked Repos:
 
 * [The Petoskey Paladin's rpivision] (https://github.com/killjoy64/Paladins-2014-Griefcase/tree/master/rpivision)
 * [Marquette's Cold Logic's LEDRanger] (https://github.com/ColdLogic-3617/2014BruceCode/blob/master/src/edu/wpi/first/wpilibj/templates/subsystems/LED.java)
-* 
