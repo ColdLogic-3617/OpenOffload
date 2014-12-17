@@ -267,7 +267,6 @@ int main(int argc, char **argv) {
                 }
             }
         }
-    }
     if (prevFound != Found) // This is purely for bandwidth savings. If there's no change, why broadcast?
         table->PutNumber("Hotness", Found);
 
