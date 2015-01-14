@@ -10,4 +10,4 @@ Forked Repos:
 
 * [The Petoskey Paladin's rpivision] (https://github.com/killjoy64/Paladins-2014-Griefcase/tree/master/rpivision)
 * [Team Cold Logic's LEDRanger] (https://github.com/ColdLogic-3617/Robot-Code/tree/master/src/edu/cold/logic/interfaces/LED.java)
-* [Team Cold Logic's Logging Utility] (https://github.com/ColdLogic-3617/2014BruceCode/blob/master/src/edu/gappleto/common/Logger.java)
+* [Team Cold Logic's Logging Utility] (https://github.com/ColdLogic-3617/Robot-Code/blob/master/src/edu/gappleto/common/Log.java)
